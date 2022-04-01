@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Public/InteractiveActor.h"
+
 #include "DeadSaplingCharacter.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FToggleBuildMode);
 
 UCLASS(config=Game)
 class ADeadSaplingCharacter : public ACharacter
@@ -18,6 +22,7 @@ class ADeadSaplingCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
 public:
 	ADeadSaplingCharacter();
 
@@ -29,10 +34,33 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	/** Functionality to interact with interactable Actors 
+		Interaction works as follows: We trace in tick, if an Actor with InteractiveActor interface is hit,
+		we save it in @lastInteractiveTraced. If the user decides to interact with it:
+		in build mode (B) left click
+		in normal mode F
+		the Interact() function is called.
+		there is a PreInteract() function that can be executed as well to trigger effects / predisplay of towers etc.
+	*/
+
+	UFUNCTION()
+	void Interact();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Trace)
+	float LineTraceDistance;
+
+	AActor* lastInteractiveTraced;
+
+	/** Delegate Shizzle */
+	UPROPERTY(BlueprintAssignable)
+	FToggleBuildMode OnBuildModeToggle;
+
+
 protected:
 
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -51,12 +79,6 @@ protected:
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
 	void LookUpAtRate(float Rate);
-
-	/** Handler for when a touch input begins. */
-	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
-
-	/** Handler for when a touch input stops. */
-	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
 protected:
 	// APawn interface

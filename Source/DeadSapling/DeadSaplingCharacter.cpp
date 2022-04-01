@@ -9,17 +9,26 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
+#include "DrawDebugHelpers.h"
+
+
 //////////////////////////////////////////////////////////////////////////
 // ADeadSaplingCharacter
 
 ADeadSaplingCharacter::ADeadSaplingCharacter()
 {
+	// Set up tick for main character - so we can trace camera viewing direction all the time.
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
+
+	// set our trace properties 
+	LineTraceDistance = 100000.f;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -57,6 +66,8 @@ void ADeadSaplingCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ADeadSaplingCharacter::Interact);
+	
 	PlayerInputComponent->BindAxis("MoveForward", this, &ADeadSaplingCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ADeadSaplingCharacter::MoveRight);
 
@@ -67,35 +78,6 @@ void ADeadSaplingCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAxis("TurnRate", this, &ADeadSaplingCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ADeadSaplingCharacter::LookUpAtRate);
-
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &ADeadSaplingCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &ADeadSaplingCharacter::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ADeadSaplingCharacter::OnResetVR);
-}
-
-
-void ADeadSaplingCharacter::OnResetVR()
-{
-	// If DeadSapling is added to a project via 'Add Feature' in the Unreal Editor the dependency on HeadMountedDisplay in DeadSapling.Build.cs is not automatically propagated
-	// and a linker error will result.
-	// You will need to either:
-	//		Add "HeadMountedDisplay" to [YourProject].Build.cs PublicDependencyModuleNames in order to build successfully (appropriate if supporting VR).
-	// or:
-	//		Comment or delete the call to ResetOrientationAndPosition below (appropriate if not supporting VR)
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void ADeadSaplingCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		Jump();
-}
-
-void ADeadSaplingCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		StopJumping();
 }
 
 void ADeadSaplingCharacter::TurnAtRate(float Rate)
@@ -136,5 +118,50 @@ void ADeadSaplingCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+
+void ADeadSaplingCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	
+
+	FVector Start;
+	FVector End;
+
+	FVector PlayerEyesLoc;
+	FRotator PlayerEyesRot;
+
+	GetActorEyesViewPoint(PlayerEyesLoc, PlayerEyesRot);
+
+	Start = PlayerEyesLoc;
+	End = PlayerEyesLoc + (PlayerEyesRot.Vector() * LineTraceDistance);
+
+	FCollisionQueryParams TraceParams(FName(TEXT("InteractTrace")), true, this);
+
+	FHitResult InteractHit = FHitResult(ForceInit);
+
+	bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, ECC_Visibility, TraceParams);
+
+	if (bIsHit)
+	{ 		
+		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.f);
+
+		if (InteractHit.GetActor()->GetClass()->ImplementsInterface(UInteractiveActor::StaticClass()))
+		{
+			lastInteractiveTraced = InteractHit.GetActor();
+		}
+	}
+	else {
+		lastInteractiveTraced = NULL;
+	}
+}
+
+void ADeadSaplingCharacter::Interact()
+{
+	if (IsValid(lastInteractiveTraced))
+	{
+	IInteractiveActor::Execute_Interact(lastInteractiveTraced);
 	}
 }
