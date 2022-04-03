@@ -67,7 +67,6 @@ void ADeadSaplingCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ADeadSaplingCharacter::Interact);
-	PlayerInputComponent->BindAction("ToggleBuildMode", IE_Pressed, this, &ADeadSaplingCharacter::ToggleBuildMode);
 	
 	PlayerInputComponent->BindAxis("MoveForward", this, &ADeadSaplingCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ADeadSaplingCharacter::MoveRight);
@@ -91,13 +90,6 @@ void ADeadSaplingCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
-
-void ADeadSaplingCharacter::ToggleBuildMode()
-{
-	if (onBuildMenuToggle.IsBound()) {
-		onBuildMenuToggle.Broadcast();
-	}
 }
 
 void ADeadSaplingCharacter::MoveForward(float Value)
@@ -129,7 +121,6 @@ void ADeadSaplingCharacter::MoveRight(float Value)
 	}
 }
 
-
 void ADeadSaplingCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -154,7 +145,7 @@ void ADeadSaplingCharacter::Tick(float DeltaTime)
 
 	if (bIsHit)
 	{
-		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.f);
+		//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.f);
 
 		if (InteractHit.GetActor()->GetClass()->ImplementsInterface(UInteractiveActor::StaticClass()))
 		{
@@ -171,6 +162,6 @@ void ADeadSaplingCharacter::Interact()
 {
 	if (IsValid(lastInteractiveTraced))
 	{
-	IInteractiveActor::Execute_Interact(lastInteractiveTraced);
+		IInteractiveActor::Execute_Interact(lastInteractiveTraced);
 	}
 }

@@ -11,8 +11,6 @@
 #include "DeadSaplingCharacter.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBuildMenuToggle);
-
 UCLASS(config=Game)
 class ADeadSaplingCharacter : public ACharacter
 {
@@ -40,8 +38,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	FBuildMenuToggle onBuildMenuToggle;
-
 protected:
 	/** Functionality to interact with interactable Actors
 	Interaction works as follows: We trace in tick, if an Actor with InteractiveActor interface is hit,
@@ -58,10 +54,6 @@ protected:
 	float LineTraceDistance;
 
 	AActor* lastInteractiveTraced;
-
-	UFUNCTION()
-	void ToggleBuildMode();
-
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
