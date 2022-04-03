@@ -13,7 +13,6 @@ class ADeadSaplingGameMode : public AGameModeBase
 
 public:
 	ADeadSaplingGameMode();
-
 };
 
 

@@ -6,9 +6,12 @@
 #include "GameFramework/Character.h"
 #include "Public/InteractiveActor.h"
 
+#include "DeadSaplingGameInstance.h"
+
 #include "DeadSaplingCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FToggleBuildMode);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBuildMenuToggle);
 
 UCLASS(config=Game)
 class ADeadSaplingCharacter : public ACharacter
@@ -37,15 +40,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	/** Functionality to interact with interactable Actors 
-		Interaction works as follows: We trace in tick, if an Actor with InteractiveActor interface is hit,
-		we save it in @lastInteractiveTraced. If the user decides to interact with it:
-		in build mode (B) left click
-		in normal mode F
-		the Interact() function is called.
-		there is a PreInteract() function that can be executed as well to trigger effects / predisplay of towers etc.
-	*/
+	FBuildMenuToggle onBuildMenuToggle;
 
+protected:
+	/** Functionality to interact with interactable Actors
+	Interaction works as follows: We trace in tick, if an Actor with InteractiveActor interface is hit,
+	we save it in @lastInteractiveTraced. If the user decides to interact with it:
+	in build mode (B) left click
+	in normal mode F
+	the Interact() function is called.
+	there is a OnTrace() function that can be executed before Interact() to trigger effects / predisplay of towers etc.
+*/
 	UFUNCTION()
 	void Interact();
 
@@ -54,12 +59,8 @@ public:
 
 	AActor* lastInteractiveTraced;
 
-	/** Delegate Shizzle */
-	UPROPERTY(BlueprintAssignable)
-	FToggleBuildMode OnBuildModeToggle;
-
-
-protected:
+	UFUNCTION()
+	void ToggleBuildMode();
 
 
 	/** Called for forwards/backward input */

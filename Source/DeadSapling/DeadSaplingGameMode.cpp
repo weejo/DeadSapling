@@ -12,4 +12,6 @@ ADeadSaplingGameMode::ADeadSaplingGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+	//set custom PlayerControllerClass...
+	//PlayerControllerClass = ADeadSaplingPlayerController::StaticClass();
 }
