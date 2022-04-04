@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Public/InteractiveActor.h"
 
+#include "LogMacros.h"
+#include "Public/DeadSaplingPlayerController.h"
 #include "DeadSaplingGameInstance.h"
 
 #include "DeadSaplingCharacter.generated.h"

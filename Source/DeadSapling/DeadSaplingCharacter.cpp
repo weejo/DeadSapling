@@ -154,6 +154,12 @@ void ADeadSaplingCharacter::Tick(float DeltaTime)
 		}
 	}
 	else {
+		if (lastInteractiveTraced != NULL) {
+
+			if (Controller != NULL) {
+				Cast<ADeadSaplingPlayerController>(Controller)->LeaveTrace();
+			}
+		}
 		lastInteractiveTraced = NULL;
 	}
 }
