@@ -2,7 +2,6 @@
 
 #include "DeadSaplingGameMode.h"
 #include "DeadSaplingCharacter.h"
-#include "DeadSaplingGameState.h"
 #include "UObject/ConstructorHelpers.h"
 
 ADeadSaplingGameMode::ADeadSaplingGameMode()
@@ -16,9 +15,5 @@ ADeadSaplingGameMode::ADeadSaplingGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
-
-	//Set custom gamestate class
-	static ConstructorHelpers::FClassFinder<AGameStateBase> GameStateBPClass(TEXT("/Game/DeadSapling/Scripts/BP_DeadSaplingGameState"));
-	GameStateClass = GameStateBPClass.Class;
 
 }
