@@ -1,8 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "DeadSaplingGameMode.h"
-#include "DeadSaplingCharacter.h"
-#include "DeadSaplingGameState.h"
+#include "../Player/DeadSaplingCharacter.h"
+#include "../Settings/DeadSaplingGameState.h"
+#include "../Player/DeadSaplingPlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
 ADeadSaplingGameMode::ADeadSaplingGameMode()
@@ -11,7 +12,7 @@ ADeadSaplingGameMode::ADeadSaplingGameMode()
 	PlayerControllerClass = ADeadSaplingPlayerController::StaticClass();
 
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/DeadSapling/Scripts/ThirdPersonCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/DeadSapling/Scripts/BP_ThirdPersonCharacter"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;

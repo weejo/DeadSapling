@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 
-#include "Public/DeadSaplingPlayerController.h"
+#include "../Player/DeadSaplingPlayerController.h"
 
 #include "DeadSaplingGameMode.generated.h"
 
@@ -13,7 +13,6 @@ UCLASS(minimalapi)
 class ADeadSaplingGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-
 public:
 	ADeadSaplingGameMode();
 };

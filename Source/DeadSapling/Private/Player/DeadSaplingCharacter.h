@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Public/InteractiveActor.h"
+#include "../Interactive/InteractiveActor.h"
 
-#include "LogMacros.h"
-#include "Public/DeadSaplingPlayerController.h"
-#include "DeadSaplingGameInstance.h"
+#include "../../LogMacros.h"
+#include "DeadSaplingPlayerController.h"
+#include "../Settings/DeadSaplingGameInstance.h"
 
 #include "DeadSaplingCharacter.generated.h"
 
