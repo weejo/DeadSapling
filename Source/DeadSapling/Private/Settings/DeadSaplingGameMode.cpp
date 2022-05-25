@@ -19,7 +19,6 @@ ADeadSaplingGameMode::ADeadSaplingGameMode()
 	}
 
 	//Set custom gamestate class
-	static ConstructorHelpers::FClassFinder<AGameStateBase> GameStateBPClass(TEXT("/Game/DeadSapling/Scripts/BP_DeadSaplingGameState"));
+	static ConstructorHelpers::FClassFinder<AGameStateBase> GameStateBPClass(TEXT("/Game/DeadSapling/Scripts/BP_GameState"));
 	GameStateClass = GameStateBPClass.Class;
-
 }
