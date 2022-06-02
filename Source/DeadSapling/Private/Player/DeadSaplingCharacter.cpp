@@ -11,6 +11,7 @@
 
 #include "DrawDebugHelpers.h"
 
+#define TRACE_INTERACTIVE		ECC_GameTraceChannel2
 
 //////////////////////////////////////////////////////////////////////////
 // ADeadSaplingCharacter
@@ -141,17 +142,13 @@ void ADeadSaplingCharacter::Tick(float DeltaTime)
 
 	FHitResult InteractHit = FHitResult(ForceInit);
 
-	bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, ECC_Visibility, TraceParams);
+	bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, TRACE_INTERACTIVE, TraceParams);
+
 
 	if (bIsHit)
 	{
-		//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.f);
-
-		if (InteractHit.GetActor()->GetClass()->ImplementsInterface(UInteractiveActor::StaticClass()))
-		{
-			lastInteractiveTraced = InteractHit.GetActor();
-			IInteractiveActor::Execute_OnTrace(lastInteractiveTraced);
-		}
+		lastInteractiveTraced = InteractHit.GetActor();
+		IInteractiveActor::Execute_OnTrace(lastInteractiveTraced);
 	}
 	else {
 		lastInteractiveTraced = NULL;
